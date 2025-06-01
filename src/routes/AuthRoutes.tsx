@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 // @ts-ignore
 import Login from "../pages/client/login";
 
-// Puedes agregar esta línea para los demás .jsx si también están en ese formato
 // @ts-ignore
 import Home from "../pages/client/home";
 // @ts-ignore
@@ -24,6 +23,7 @@ import Vendedor from "../pages/vendedor/dashboard";
 import Bodeguero from "../pages/bodeguero/dashboard";
 // @ts-ignore
 import Contador from "../pages/contador/dashboard";
+// @ts-ignore
 
 export function AuthRoutes() {
   return (
