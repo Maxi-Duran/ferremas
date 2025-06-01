@@ -5,8 +5,10 @@ import Login from "../pages/client/login";
 
 // @ts-ignore
 import Home from "../pages/client/home";
+
 // @ts-ignore
 import Catalogo from "../pages/client/catalogo";
+
 // @ts-ignore
 import DetalleProducto from "../pages/client/DetalleProducto";
 // @ts-ignore
@@ -23,7 +25,6 @@ import Vendedor from "../pages/vendedor/dashboard";
 import Bodeguero from "../pages/bodeguero/dashboard";
 // @ts-ignore
 import Contador from "../pages/contador/dashboard";
-// @ts-ignore
 
 export function AuthRoutes() {
   return (
