@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Select,
   SelectContent,
@@ -28,12 +27,12 @@ function Catalogo() {
 
   useState([]);
   //filter
-  const handleCategoriaChange = (value) => {
+  const handleCategoriaChange = (value: any) => {
     setCategoriaSeleccionada(value);
   };
   useEffect(() => {
     const filtrados = productos.filter(
-      (producto) =>
+      (producto: any) =>
         producto.activo &&
         (categoriaSeleccionada === "0" ||
           String(producto.categoria_id) === categoriaSeleccionada)
@@ -126,7 +125,7 @@ function Catalogo() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="0">Todas las categorias</SelectItem>
-              {categorias.map((cat) => (
+              {categorias.map((cat: any) => (
                 <SelectItem
                   key={cat.id_categoria}
                   value={String(cat.id_categoria)}
@@ -150,7 +149,7 @@ function Catalogo() {
         </div>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-10">
-        {productosPagina.map((producto) => (
+        {productosPagina.map((producto: any) => (
           <div
             key={producto.id_producto}
             className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden hover:shadow-lg transition-shadow"
@@ -184,7 +183,7 @@ function Catalogo() {
                 {producto.nombre}
               </h3>
               <p className="text-sm text-gray-600 line-clamp-2 mb-2">
-                {productos.descripcion}
+                {producto.descripcion}
               </p>
               {/* <div class="flex items-center space-x-2">
                 <div class="flex items-center">

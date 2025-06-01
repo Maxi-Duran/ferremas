@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Tabs,
   TabsContent,
@@ -34,12 +33,12 @@ function Dashboard() {
   const [paginaActual, setPaginaActual] = useState(1);
   const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("0");
   const [productos, setProductos] = useState([]);
-  const [productosFiltrados, setProductosFiltrados] = useState([]);
+
   const [pedidos, setPedidos] = useState([]);
 
   useState([]);
   //filter
-  const handleCategoriaChange = (value) => {
+  const handleCategoriaChange = (value: any) => {
     setCategoriaSeleccionada(value);
   };
   //pagination
@@ -56,8 +55,8 @@ function Dashboard() {
       try {
         const productos = await productosService.getAll();
 
-        const productosConDatos = await Promise.all(
-          productos.map(async (pedido) => {
+        const productosConDatos: any = await Promise.all(
+          productos.map(async (pedido: any) => {
             const categoria = await categoriaService.getById(
               pedido.categoria_id
             );
@@ -91,8 +90,8 @@ function Dashboard() {
       try {
         const pedidos = await pedidosService.getAll();
 
-        const pedidosConDatos = await Promise.all(
-          pedidos.map(async (pedido) => {
+        const pedidosConDatos: any = await Promise.all(
+          pedidos.map(async (pedido: any) => {
             const sucursal = await sucursalesService.getById(
               pedido.sucursal_retiro
             );
@@ -117,26 +116,18 @@ function Dashboard() {
   console.log(pedidos);
   console.log(productos);
   const pedidosPendientes = pedidos.filter(
-    (pedido) => pedido.estado === "Creado"
+    (pedido: any) => pedido.estado === "Creado"
   );
   const pedidosAprobados = pedidos.filter(
-    (pedido) => pedido.estado === "Aprobado"
+    (pedido: any) => pedido.estado === "Aprobado"
   );
-  const pedidosRechazados = pedidos.filter(
-    (pedido) => pedido.estado === "Cancelado"
-  );
-  const pedidosAbiertos = pedidos.filter(
-    (pedido) => pedido.estado === "EnPrep"
-  );
-  const pedidosEntregados = pedidos.filter(
-    (pedido) => pedido.estado === "Entregado"
-  );
+
   const pedidosDespachados = pedidos.filter(
-    (pedido) => pedido.estado === "Despachado"
+    (pedido: any) => pedido.estado === "Despachado"
   );
   return (
     <div className="container mx-auto px-4 py-8">
-      <div class="grid md:grid-cols-4 gap-6 mb-8">
+      <div className="grid md:grid-cols-4 gap-6 mb-8">
         <div
           className="rounded-lg border bg-card text-card-foreground shadow-sm"
           data-v0-t="card"
@@ -293,8 +284,8 @@ function Dashboard() {
               <div className="p-6 pt-0">
                 <div className="space-y-4">
                   {pedidos
-                    .filter((pedido) => pedido.estado === "Creado")
-                    .map((pedido) => (
+                    .filter((pedido: any) => pedido.estado === "Creado")
+                    .map((pedido: any) => (
                       <div
                         key={pedido.id_pedido}
                         className="p-6 border rounded-lg"
@@ -351,12 +342,10 @@ function Dashboard() {
                           </div>
                         </div>
                         <div className="flex space-x-2">
-                          <Button variant="" classNameName="bg-emerald-600">
-                            Aprobar
-                          </Button>
+                          <Button className="bg-emerald-600">Aprobar</Button>
                           <Button variant="destructive">Rechazar</Button>
                           <Button variant="secondary">Ver detalles</Button>
-                          <Button variant="">Enviar a bodega</Button>
+                          <Button>Enviar a bodega</Button>
                         </div>
                       </div>
                     ))}
@@ -406,7 +395,7 @@ function Dashboard() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="0">Todas las categorias</SelectItem>
-                      {categorias.map((cat) => (
+                      {categorias.map((cat: any) => (
                         <SelectItem
                           key={cat.id_categoria}
                           value={String(cat.id_categoria)}
@@ -417,28 +406,28 @@ function Dashboard() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div class="pt-5 flex flex-col gap-5">
-                  {productosAMostrar.map((producto) => (
+                <div className="pt-5 flex flex-col gap-5">
+                  {productosAMostrar.map((producto: any) => (
                     <div
                       key={producto.id_producto}
-                      class="p-4 border rounded-lg"
+                      className="p-4 border rounded-lg"
                     >
-                      <div class="flex items-center justify-between">
+                      <div className="flex items-center justify-between">
                         <div>
-                          <h3 class="font-semibold">{producto.nombre}</h3>
-                          <p class="text-sm text-gray-600">
+                          <h3 className="font-semibold">{producto.nombre}</h3>
+                          <p className="text-sm text-gray-600">
                             Marca: {producto.marca}
                           </p>
-                          <p class="text-sm text-gray-600">
+                          <p className="text-sm text-gray-600">
                             Categoría: {producto.categoria_id.nombre}
                           </p>
-                          <p class="text-sm text-gray-600">
+                          <p className="text-sm text-gray-600">
                             Precio: {producto.preciosHistoricos}
                           </p>
                         </div>
-                        <div class="text-right">
-                          <div class="flex items-center space-x-2 mb-2">
-                            <span class="text-sm font-medium">Stock:</span>
+                        <div className="text-right">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <span className="text-sm font-medium">Stock:</span>
                             <span
                               className={`text-sm font-bold ${
                                 producto.stock < 10

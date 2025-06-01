@@ -1,4 +1,3 @@
-import React, { use } from "react";
 import {
   Tabs,
   TabsContent,
@@ -35,8 +34,8 @@ function Dashboard() {
       try {
         const pedidos = await pedidosService.getAll();
 
-        const pedidosConDatos = await Promise.all(
-          pedidos.map(async (pedido) => {
+        const pedidosConDatos: any = await Promise.all(
+          pedidos.map(async (pedido: any) => {
             const cliente = await userService.getUserById(pedido.cliente_id);
             return {
               ...pedido,
@@ -57,8 +56,8 @@ function Dashboard() {
     const cargarProductosCompletos = async () => {
       try {
         const productos = await productosService.getAll();
-        const productosConDatos = await Promise.all(
-          productos.map(async (pedido) => {
+        const productosConDatos: any = await Promise.all(
+          productos.map(async (pedido: any) => {
             const categoria = await categoriaService.getById(
               pedido.categoria_id
             );
@@ -84,26 +83,18 @@ function Dashboard() {
 
   console.log(pedidos);
   const productosBajoStock = productos.filter(
-    (producto) => producto.stock < 10
+    (producto: any) => producto.stock < 10
   );
 
   const pedidosAprobados = pedidos.filter(
-    (pedido) => pedido.estado === "Aprobado"
+    (pedido: any) => pedido.estado === "Aprobado"
   );
-  const pedidosRechazados = pedidos.filter(
-    (pedido) => pedido.estado === "Cancelado"
-  );
-  const pedidosAbiertos = pedidos.filter(
-    (pedido) => pedido.estado === "EnPrep"
-  );
-  const pedidosEntregados = pedidos.filter(
-    (pedido) => pedido.estado === "Entregado"
-  );
+
   const pedidosDespachados = pedidos.filter(
-    (pedido) => pedido.estado === "Despachado"
+    (pedido: any) => pedido.estado === "Despachado"
   );
   const pedidosPendientes = pedidos.filter(
-    (pedido) => pedido.estado === "Creado"
+    (pedido: any) => pedido.estado === "Creado"
   );
   return (
     <div className="container mx-auto px-4 py-8">
@@ -259,7 +250,7 @@ function Dashboard() {
                 </p>
               </div>
               <div className="p-6 pt-0">
-                {pedidosAprobados.map((pedido) => (
+                {pedidosAprobados.map((pedido: any) => (
                   <div key={pedido.id_pedido} className="space-y-4">
                     <div className="p-4 border rounded-lg">
                       <div className="flex items-center justify-between mb-4">
@@ -491,7 +482,7 @@ function Dashboard() {
                 </div>
                 <div className="p-6 pt-0">
                   <div className="space-y-4">
-                    {productosAMostrar.map((producto) => (
+                    {productosAMostrar.map((producto: any) => (
                       <div
                         key={producto.id_producto}
                         className="p-4 border rounded-lg"

@@ -1,32 +1,30 @@
-import React from "react";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Checkbox } from "../../components/ui/checkbox";
 
 import { useState } from "react";
-import userService from "../../services/usuarios.service";
+
 function Registro() {
   const [user, setUser] = useState({
     nombre: "",
     apellido: "",
     correo: "",
     contrasena_hash: "",
+    terms: false,
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    const data = await userService.create(user);
-    console.log(data);
   };
   console.log(user);
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
-        <div href="/">
+        <div>
           <a
             href="/"
             className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-6"
@@ -144,11 +142,7 @@ function Registro() {
                   </Label>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Checkbox
-                    id="emails"
-                    value={user.terms}
-                    onChange={handleChange}
-                  />
+                  <Checkbox id="emails" onChange={handleChange} />
                   <Label>
                     Quiero recibir emails de la empresa ofreciendome ofertas
                   </Label>

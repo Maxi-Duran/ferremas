@@ -1,4 +1,3 @@
-import React from "react";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 
@@ -95,7 +94,6 @@ function Checkout() {
                   className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm "
                   id="notes"
                   placeholder="Instrucciones especiales para la entrega..."
-                  rows="3"
                 ></textarea>
               </div>
             </div>

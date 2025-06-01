@@ -1,30 +1,26 @@
 import { Routes, Route } from "react-router-dom";
 
-// @ts-ignore
-import Login from "../pages/client/login.jsx";
+import Login from "../pages/client/login";
 
-// @ts-ignore
-import Home from "../pages/client/home.jsx";
+import Home from "../pages/client/home";
 
-// @ts-ignore
-import Catalogo from "../pages/client/catalogo.jsx";
+import Catalogo from "../pages/client/catalogo";
 
-// @ts-ignore
-import DetalleProducto from "../pages/client/DetalleProducto.jsx";
-// @ts-ignore
-import Carrito from "../pages/client/Carrito.jsx";
-// @ts-ignore
-import Checkout from "../pages/client/Checkout.jsx";
-// @ts-ignore
-import Registro from "../pages/client/Registro.jsx";
-// @ts-ignore
-import Dashboard from "../pages/admin/dashboard.jsx";
-// @ts-ignore
-import Vendedor from "../pages/vendedor/dashboard.jsx";
-// @ts-ignore
-import Bodeguero from "../pages/bodeguero/dashboard.jsx";
-// @ts-ignore
-import Contador from "../pages/contador/dashboard.jsx";
+import DetalleProducto from "../pages/client/DetalleProducto";
+
+import Carrito from "../pages/client/Carrito";
+
+import Checkout from "../pages/client/Checkout";
+
+import Registro from "../pages/client/Registro";
+
+import Dashboard from "../pages/admin/dashboard";
+
+import Vendedor from "../pages/vendedor/dashboard";
+
+import Bodeguero from "../pages/bodeguero/dashboard";
+
+import Contador from "../pages/contador/dashboard";
 
 export function AuthRoutes() {
   return (

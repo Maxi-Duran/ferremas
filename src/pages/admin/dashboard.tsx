@@ -1,11 +1,3 @@
-import React from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
 import { useEffect, useState } from "react";
 import sucursalesService from "../../services/sucursales.service";
 import { Slider } from "../../components/ui/slider";
@@ -19,12 +11,12 @@ import empleadosService from "../../services/empleados.service";
 import userService from "../../services/usuarios.service";
 function Dashboard() {
   const [sucursales, setsucursales] = useState([]);
-  const [sucursaleseleccionada, setsucursaleseleccionada] = useState("0");
+  // const [sucursaleseleccionada, setsucursaleseleccionada] = useState("0");
   const [empleados, setEmpleados] = useState([]);
 
-  const handleCategoriaChange = (value) => {
-    setsucursaleseleccionada(value);
-  };
+  // const handleCategoriaChange = (value) => {
+  //   setsucursaleseleccionada(value);
+  // };
 
   useEffect(() => {
     const cargarEmpleados = async () => {
@@ -44,8 +36,8 @@ function Dashboard() {
 
     const cargarDatosCompletos = async () => {
       try {
-        const empleadosConDatos = await Promise.all(
-          empleados.map(async (empleado) => {
+        const empleadosConDatos: any = await Promise.all(
+          empleados.map(async (empleado: any) => {
             const datosUsuario = await userService.getUserById(
               empleado.id_usuario
             );
@@ -84,18 +76,18 @@ function Dashboard() {
     cargarsucursales();
   }, []);
   const cantidadVendedores = empleados.filter(
-    (empleado) => empleado.rol.toLowerCase() === "vendedor"
+    (empleado: any) => empleado.rol.toLowerCase() === "vendedor"
   ).length;
   const cantidadBodegueros = empleados.filter(
-    (empleado) => empleado.rol.toLowerCase() === "bodeguero"
+    (empleado: any) => empleado.rol.toLowerCase() === "bodeguero"
   ).length;
   const cantidadContadores = empleados.filter(
-    (empleado) => empleado.rol.toLowerCase() === "contador"
+    (empleado: any) => empleado.rol.toLowerCase() === "contador"
   ).length;
-  const ventasTotales = sucursales.reduce((acum, sucursal) => {
+  const ventasTotales = sucursales.reduce((acum: any, sucursal: any) => {
     return acum + sucursal.ventas_totales;
   }, 0);
-  const pedidosTotales = sucursales.reduce((acum, sucursal) => {
+  const pedidosTotales = sucursales.reduce((acum: any, sucursal: any) => {
     return acum + sucursal.pedidos;
   }, 0);
   const ventasFormateadas = ventasTotales.toLocaleString("es-CL", {
@@ -260,7 +252,7 @@ function Dashboard() {
               </div>
               <div className="p-6 pt-0">
                 <div className="space-y-4">
-                  {sucursales.map((sucursal) => (
+                  {sucursales.map((sucursal: any) => (
                     <div
                       key={sucursal.id_sucursal}
                       className="flex items-center justify-between p-4 border rounded-lg"
@@ -392,7 +384,7 @@ function Dashboard() {
                       Comparativa de Sucursales
                     </h3>
                     <div className="space-y-4">
-                      {sucursales.map((sucursal) => (
+                      {sucursales.map((sucursal: any) => (
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
                             <span className="font-medium">
@@ -463,7 +455,7 @@ function Dashboard() {
                   </div>
                   <div className="p-6 pt-0">
                     <div className="space-y-4">
-                      {empleados.map((empleado) => (
+                      {empleados.map((empleado: any) => (
                         <div
                           key={empleado.id_usuario.id_usuario}
                           className="flex items-center justify-between p-4 border rounded-lg"
@@ -565,73 +557,77 @@ function Dashboard() {
           </TabsContent>
           <TabsContent value="promociones">
             <div
-              class="rounded-lg border bg-card text-card-foreground shadow-sm"
+              className="rounded-lg border bg-card text-card-foreground shadow-sm"
               data-v0-t="card"
             >
-              <div class="flex flex-col space-y-1.5 p-6">
-                <div class="flex justify-between items-center">
+              <div className="flex flex-col space-y-1.5 p-6">
+                <div className="flex justify-between items-center">
                   <div>
-                    <h3 class="text-2xl font-semibold leading-none tracking-tight">
+                    <h3 className="text-2xl font-semibold leading-none tracking-tight">
                       Promociones y Estrategias de Venta
                     </h3>
-                    <p class="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       Crea y gestiona promociones para impulsar las ventas
                     </p>
                   </div>
                   <a
                     href="/admin/promotions"
-                    class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
                   >
                     Crear Nueva Promoción
                   </a>
                 </div>
               </div>
-              <div class="p-6 pt-0">
-                <div class="space-y-4">
-                  <div class="grid gap-4">
-                    <div class="p-4 border rounded-lg">
-                      <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-semibold">Descuento Black Friday</h3>
+              <div className="p-6 pt-0">
+                <div className="space-y-4">
+                  <div className="grid gap-4">
+                    <div className="p-4 border rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-semibold">
+                          Descuento Black Friday
+                        </h3>
                         <div
-                          class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
+                          className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
                           data-v0-t="badge"
                         >
                           Activa
                         </div>
                       </div>
-                      <p class="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-gray-600 mb-2">
                         20% de descuento en productos seleccionados
                       </p>
-                      <div class="flex justify-between items-center">
-                        <p class="text-xs text-gray-500">
+                      <div className="flex justify-between items-center">
+                        <p className="text-xs text-gray-500">
                           Válida hasta: 30/11/2024
                         </p>
                         <a
                           href="/admin/promotions/1"
-                          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                          className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
                         >
                           Editar
                         </a>
                       </div>
                     </div>
-                    <div class="p-4 border rounded-lg">
-                      <div class="flex justify-between items-start mb-2">
-                        <h3 class="font-semibold">Envío Gratis</h3>
+                    <div className="p-4 border rounded-lg">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-semibold">Envío Gratis</h3>
                         <div
-                          class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                          className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
                           data-v0-t="badge"
                         >
                           Programada
                         </div>
                       </div>
-                      <p class="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-gray-600 mb-2">
                         Envío gratuito en compras sobre $50.000
                       </p>
-                      <div class="flex justify-between items-center">
-                        <p class="text-xs text-gray-500">Inicia: 01/12/2024</p>
+                      <div className="flex justify-between items-center">
+                        <p className="text-xs text-gray-500">
+                          Inicia: 01/12/2024
+                        </p>
                         <a
                           href="/admin/promotions/2"
-                          class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                          className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
                         >
                           Editar
                         </a>

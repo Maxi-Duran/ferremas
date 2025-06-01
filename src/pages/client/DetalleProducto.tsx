@@ -1,10 +1,22 @@
-import React from "react";
 import { useState, useEffect } from "react";
 import productosService from "../../services/products.service";
 import { useParams } from "react-router-dom";
 function DetalleProducto() {
   const { id } = useParams();
-  const [producto, setProducto] = useState(null);
+  interface Producto {
+    id: number;
+    nombre: string;
+    descripcion: string;
+    precio: number;
+    stock: number;
+    imagen: string;
+    marca: string;
+    codigo_sku: string;
+    activo: boolean;
+    precioshistoricos: number;
+  }
+
+  const [producto, setProducto] = useState<Producto | null>(null);
 
   useEffect(() => {
     if (id) {

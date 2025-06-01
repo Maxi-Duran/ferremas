@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Tabs,
   TabsContent,
@@ -31,13 +30,13 @@ function Login() {
     pass: "",
   });
   const navigate = useNavigate();
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
-  const handleChange2 = (e) => {
+  const handleChange2 = (e: any) => {
     setEmpleado({ ...empleado, [e.target.name]: e.target.value });
   };
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     const data = await userService.login(user);
     console.log(data);
@@ -48,7 +47,7 @@ function Login() {
       window.location.reload();
     }
   };
-  const handleSubmit2 = async (e) => {
+  const handleSubmit2 = async (e: any) => {
     e.preventDefault();
     const data = await empleadoService.login(empleado);
     console.log(data);
@@ -104,7 +103,7 @@ function Login() {
                       id="pass"
                       name="pass"
                       type="password"
-                      value={user.password}
+                      value={user.pass}
                       onChange={handleChange}
                     />
                   </div>
