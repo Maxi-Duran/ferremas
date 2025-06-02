@@ -58,7 +58,7 @@ function Catalogo() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "http://integest.michimisimo.cloud/apiBsnss/productos"
+          "http://inteplat.michimisimo.cloud:3000/apiBsnss/productos"
         );
         if (!response.ok)
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -76,7 +76,7 @@ function Catalogo() {
     const fetchCategorias = async () => {
       try {
         const response = await fetch(
-          "http://integest.michimisimo.cloud/apiBsnss/categorias"
+          "http://inteplat.michimisimo.cloud:3000/apiBsnss/categorias"
         );
         if (!response.ok)
           throw new Error(`HTTP error! status: ${response.status}`);
