@@ -33,15 +33,10 @@ function Dashboard() {
   const [sucursales, setsucursales] = useState([]);
   // const [sucursaleseleccionada, setsucursaleseleccionada] = useState("0");
   const [empleados, setEmpleados] = useState([]);
-  const [sucursalSeleccionada, setSucursalSeleccionada] = useState("0");
 
   // const handleCategoriaChange = (value) => {
   //   setsucursaleseleccionada(value);
   // };
-  const handleSucursalChange = (value: string) => {
-    setSucursalSeleccionada(value);
-    setEmpleado((prev) => ({ ...prev, sucursal: value }));
-  };
 
   useEffect(() => {
     const cargarEmpleados = async () => {
