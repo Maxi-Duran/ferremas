@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./components/ui/select";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import sucursalesService from "./services/sucursales.service";
 import type { Sucursal } from "./types/sucursal";
@@ -26,7 +27,7 @@ function App() {
   ];
 
   const ocultarHeader = rutasSinHeader.includes(location.pathname);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const id = localStorage.getItem("user");
     if (id) {
@@ -40,6 +41,17 @@ function App() {
       };
 
       obtenerUsuario();
+    }
+  }, []);
+  useEffect(() => {
+    if (localStorage.getItem("rol") === "Vendedor") {
+      navigate("/vendedor/dashboard");
+    } else if (localStorage.getItem("rol") === "Contador") {
+      navigate("/contador/dashboard");
+    } else if (localStorage.getItem("rol") === "Bodeguero") {
+      navigate("/bodeguero/dashboard");
+    } else if (localStorage.getItem("rol") === "Admin") {
+      navigate("/admin/dashboard");
     }
   }, []);
 
@@ -162,40 +174,50 @@ function App() {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <h1 className="text-2xl font-bold">
-                  Panel Administrativo FERREMAS
+                  Panel {localStorage.getItem("rol")} Ferremas
                 </h1>
                 <div
                   className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
                   data-v0-t="badge"
                 >
-                  Administrador
+                  {localStorage.getItem("rol")}
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">nombre</span>
-                <a
-                  href="/login"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="lucide lucide-log-out h-4 w-4 mr-2"
+              {usuario && (
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-600">
+                    {usuario.nombre}
+                  </span>
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem("user");
+                      localStorage.removeItem("rol");
+                      localStorage.removeItem("sucursal");
+                      setUsuario(null);
+                      window.location.reload();
+                    }}
+                    className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
                   >
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" x2="9" y1="12" y2="12"></line>
-                  </svg>
-                  Cerrar Sesión
-                </a>
-              </div>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="lucide lucide-log-out h-4 w-4 mr-2"
+                    >
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                      <polyline points="16 17 21 12 16 7"></polyline>
+                      <line x1="21" x2="9" y1="12" y2="12"></line>
+                    </svg>
+                    Cerrar Sesión
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </header>

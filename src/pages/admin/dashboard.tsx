@@ -8,15 +8,40 @@ import {
   TabsTrigger,
 } from "../../components/ui/tabs";
 import empleadosService from "../../services/empleados.service";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Button } from "../../components/ui/button";
 import userService from "../../services/usuarios.service";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogClose,
+} from "../../components/ui/dialog";
 function Dashboard() {
   const [sucursales, setsucursales] = useState([]);
   // const [sucursaleseleccionada, setsucursaleseleccionada] = useState("0");
   const [empleados, setEmpleados] = useState([]);
+  const [sucursalSeleccionada, setSucursalSeleccionada] = useState("0");
 
   // const handleCategoriaChange = (value) => {
   //   setsucursaleseleccionada(value);
   // };
+  const handleSucursalChange = (value: string) => {
+    setSucursalSeleccionada(value);
+    setEmpleado((prev) => ({ ...prev, sucursal: value }));
+  };
 
   useEffect(() => {
     const cargarEmpleados = async () => {
@@ -95,6 +120,41 @@ function Dashboard() {
     currency: "CLP",
     minimumFractionDigits: 0,
   });
+  //crear empleado
+  const [user, setUser] = useState({
+    nombre: "",
+    apellido: "",
+    correo: "",
+    contrasena_hash: "",
+  });
+  const [empleado, setEmpleado] = useState({
+    rol: "",
+    rut: "",
+    sucursal_id: "",
+  });
+
+  const handleUserChange = (e: any) => {
+    const { name, value } = e.target;
+    setUser((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleEmpleadoChange = (e: any) => {
+    const { name, value } = e.target;
+    setEmpleado((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    const body = {
+      usuario: user,
+      empleado: empleado,
+    };
+
+    await empleadosService.create(body);
+    alert("Usuario creado");
+  };
+
+  console.log("user", user, "empleado", empleado);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -419,29 +479,141 @@ function Dashboard() {
                 <h2 className="text-2xl font-bold text-black">
                   Gestión de Usuarios
                 </h2>
-                <a
-                  href="/admin/users"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    className="lucide lucide-user-plus h-4 w-4 mr-2"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <line x1="19" x2="19" y1="8" y2="14"></line>
-                    <line x1="22" x2="16" y1="11" y2="11"></line>
-                  </svg>
-                  Crear Usuario
-                </a>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors  bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        className="lucide lucide-user-plus h-4 w-4 mr-2"
+                      >
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <line x1="19" x2="19" y1="8" y2="14"></line>
+                        <line x1="22" x2="16" y1="11" y2="11"></line>
+                      </svg>
+                      Crear Usuario
+                    </Button>
+                  </DialogTrigger>
+
+                  <DialogContent className="sm:max-w-[800px]">
+                    <form onSubmit={handleSubmit}>
+                      <DialogHeader className="p-0">
+                        <DialogTitle>Crear empleado</DialogTitle>
+                        <DialogDescription>
+                          Completa los datos para crear un nuevo empleado
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex items-center gap-4 justify-center">
+                        <div className="grid gap-3 w-full">
+                          <Label htmlFor="nombre">Nombre</Label>
+                          <Input
+                            id="nombre"
+                            name="nombre"
+                            onChange={handleUserChange}
+                          />
+                        </div>
+                        <div className="grid gap-3 w-full">
+                          <Label htmlFor="apellido">Apellido</Label>
+                          <Input
+                            id="apellido"
+                            name="apellido"
+                            onChange={handleUserChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="grid gap-3 w-full">
+                          <Label htmlFor="correo">Correo</Label>
+                          <Input
+                            id="correo"
+                            name="correo"
+                            onChange={handleUserChange}
+                          />
+                        </div>
+                        <div className="grid gap-3 w-full">
+                          <Label htmlFor="contrasena_hash">Contraseña</Label>
+                          <Input
+                            id="contrasena_hash"
+                            name="contrasena_hash"
+                            onChange={handleUserChange}
+                          />
+                        </div>
+                      </div>
+                      <div className="grid gap-3 w-full">
+                        <Label htmlFor="rut">Rut</Label>
+                        <Input
+                          id="rut"
+                          name="rut"
+                          onChange={handleEmpleadoChange}
+                        />
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="grid gap-3 w-full">
+                          <Label htmlFor="rol">Sucursal</Label>
+                          <Select
+                            onValueChange={(value) =>
+                              setEmpleado({ ...empleado, sucursal_id: value })
+                            }
+                            value={empleado.sucursal_id}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Todas las sucursales" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="0">
+                                Todas las sucursales
+                              </SelectItem>
+                              {sucursales.map((sucursal: any) => (
+                                <SelectItem
+                                  key={sucursal.id_sucursal}
+                                  value={String(sucursal.id_sucursal)}
+                                >
+                                  {sucursal.nombre}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="grid gap-3 w-full">
+                          <Label htmlFor="rol">Rol</Label>
+                          <Select
+                            onValueChange={(value) =>
+                              setEmpleado({ ...empleado, rol: value })
+                            }
+                            value={empleado.rol}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Selecciona un rol" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Vendedor">Vendedor</SelectItem>
+                              <SelectItem value="Contador">Contador</SelectItem>
+                              <SelectItem value="Bodeguero">
+                                Bodeguero
+                              </SelectItem>
+                              <SelectItem value="Admin">Admin</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">Cancelar</Button>
+                        </DialogClose>
+                        <Button type="submit">Crear</Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div className="grid gap-4">
                 <div

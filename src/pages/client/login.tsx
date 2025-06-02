@@ -42,7 +42,7 @@ function Login() {
     console.log(data);
     if (data.clientes) {
       console.log("es cliente");
-      localStorage.setItem("user", data.id_usuario);
+      localStorage.setItem("user", data.clientes.id_usuario);
       navigate("/");
       window.location.reload();
     }
@@ -50,6 +50,21 @@ function Login() {
   const handleSubmit2 = async (e: any) => {
     e.preventDefault();
     const data = await empleadoService.login(empleado);
+    if (data.empleados) {
+      console.log("es empleado");
+      localStorage.setItem("user", data.empleados.id_usuario);
+      localStorage.setItem("rol", data.empleados.rol);
+      localStorage.setItem("sucursal", data.empleados.sucursal_id);
+      if (data.empleados.rol === "Vendedor") {
+        navigate("/vendedor/dashboard");
+      } else if (data.empleados.rol === "Contador") {
+        navigate("/contador/dashboard");
+      } else if (data.empleados.rol === "Bodeguero") {
+        navigate("/bodeguero/dashboard");
+      } else if (data.empleados.rol === "Admin") {
+        navigate("/admin/dashboard");
+      }
+    }
     console.log(data);
   };
   console.log(user);

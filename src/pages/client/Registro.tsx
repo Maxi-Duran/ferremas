@@ -4,13 +4,13 @@ import { Checkbox } from "../../components/ui/checkbox";
 
 import { useState } from "react";
 
+import userService from "../../services/usuarios.service";
 function Registro() {
   const [user, setUser] = useState({
     nombre: "",
     apellido: "",
     correo: "",
     contrasena_hash: "",
-    terms: false,
   });
 
   const handleChange = (e: any) => {
@@ -19,6 +19,7 @@ function Registro() {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    await userService.create(user);
   };
   console.log(user);
   return (

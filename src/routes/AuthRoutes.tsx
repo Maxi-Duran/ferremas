@@ -21,6 +21,7 @@ import Vendedor from "../pages/vendedor/dashboard";
 import Bodeguero from "../pages/bodeguero/dashboard";
 
 import Contador from "../pages/contador/dashboard";
+import ProtectedRoute from "../components/protectedRoute";
 
 export function AuthRoutes() {
   return (
@@ -32,10 +33,38 @@ export function AuthRoutes() {
       <Route path="/product/:id" element={<DetalleProducto />} />
       <Route path="/checkout" element={<Checkout />} />
       <Route path="register" element={<Registro />} />
-      <Route path="admin/dashboard" element={<Dashboard />} />
-      <Route path="vendedor/dashboard" element={<Vendedor />} />
-      <Route path="bodeguero/dashboard" element={<Bodeguero />} />
-      <Route path="contador/dashboard" element={<Contador />} />
+      <Route
+        path="/admin/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={["Admin"]}>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/vendedor/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={["Vendedor"]}>
+            <Vendedor />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/contador/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={["Contador"]}>
+            <Contador />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/bodeguero/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={["Bodeguero"]}>
+            <Bodeguero />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
