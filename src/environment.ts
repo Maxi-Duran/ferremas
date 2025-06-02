@@ -1,6 +1,6 @@
 const url = {
-  apiUrl: "http://localhost:3000/apiBsnss",
-  apiUrlUsers: "http://localhost:5000/apiUsers",
+  apiUrl: "http://integest.michimisimo.cloud/apiBsnss",
+  apiUrlUsers: "http://integest.michimisimo.cloud/apiUsers",
 };
 
 export default url;
