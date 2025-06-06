@@ -17,7 +17,12 @@ function App() {
   const [sucursales, setSucursales] = useState<Sucursal[]>([]);
   const [sucursalSeleccionada, setSucursalSeleccionada] = useState<string>("");
   const [usuario, setUsuario] = useState<{ nombre: string } | null>(null);
-
+  type Sucursal2 = {
+    id: number;
+    nombre: string;
+    // agrega otros campos si los tienes
+  };
+  const [sucursal, setSucursal] = useState<Sucursal2 | null>(null);
   const location = useLocation();
   const rutasSinHeader = [
     "/admin/dashboard",
@@ -64,9 +69,19 @@ function App() {
         console.error("Error al cargar sucursales:", error);
       }
     };
+    const sucursalId = async () => {
+      try {
+        const data = await sucursalesService.getById(
+          localStorage.getItem("sucursal")
+        );
+        setSucursal(data);
+      } catch (error) {}
+    };
 
+    sucursalId();
     cargarSucursales();
   }, []);
+
   return (
     <>
       {!ocultarHeader ? (
@@ -181,6 +196,12 @@ function App() {
                   data-v0-t="badge"
                 >
                   {localStorage.getItem("rol")}
+                </div>
+                <div
+                  className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  data-v0-t="badge"
+                >
+                  {sucursal?.nombre}
                 </div>
               </div>
               {usuario && (
