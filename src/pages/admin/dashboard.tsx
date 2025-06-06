@@ -121,12 +121,33 @@ function Dashboard() {
     apellido: "",
     correo: "",
     contrasena_hash: "",
+    activo: true,
   });
   const [empleado, setEmpleado] = useState({
     rol: "",
     rut: "",
     sucursal_id: "",
   });
+
+  const editHandleUserChange = (e: any) => {
+    const { name, value } = e.target;
+    setEditUser((prev) => ({ ...prev, [name]: value }));
+  };
+  const editHandleEmpleadoChange = (e: any) => {
+    const { name, value } = e.target;
+    setEditEmpleado((prev) => ({ ...prev, [name]: value }));
+  };
+  const editHandleSubmit = async (e: any) => {
+    e.preventDefault();
+    const body = {
+      usuario: editUser,
+      empleado: editEmpleado,
+    };
+    const id = editUser.id_usuario;
+
+    await empleadosService.edit(body, id);
+    alert("Usuario editado");
+  };
 
   const handleUserChange = (e: any) => {
     const { name, value } = e.target;
@@ -147,6 +168,103 @@ function Dashboard() {
 
     await empleadosService.create(body);
     alert("Usuario creado");
+  };
+  const [editUser, setEditUser] = useState({
+    id_usuario: "",
+    nombre: user.nombre,
+    apellido: user.apellido,
+    correo: user.correo,
+    contrasena_hash: user.contrasena_hash,
+    activo: user.activo,
+  });
+
+  const [editEmpleado, setEditEmpleado] = useState({
+    rol: empleado.rol,
+    rut: empleado.rut,
+    sucursal_id: empleado.sucursal_id,
+  });
+  const handleEditClick = (empleadoSeleccionado: any) => {
+    setEditUser({
+      id_usuario: empleadoSeleccionado.id_usuario.id_usuario, // ← aquí
+      nombre: empleadoSeleccionado.id_usuario.nombre,
+      apellido: empleadoSeleccionado.id_usuario.apellido,
+      correo: empleadoSeleccionado.id_usuario.correo,
+      contrasena_hash: empleadoSeleccionado.id_usuario.contrasena_hash,
+      activo: empleadoSeleccionado.id_usuario.activo,
+    });
+
+    setEditEmpleado({
+      rut: empleadoSeleccionado.rut,
+      rol: empleadoSeleccionado.rol,
+      sucursal_id: String(empleadoSeleccionado.sucursal_id.id_sucursal),
+    });
+  };
+  const desactivarUsuario = async (id: any) => {
+    try {
+      await empleadosService.remove(id);
+      alert("Usuario desactivado");
+    } catch (error) {
+      console.error("Error al desactivar usuario:", error);
+      alert("Error al desactivar el usuario");
+    }
+  };
+  //clientes
+  const [clientes, setClientes] = useState([]);
+
+  const [editCliente, setEditCliente] = useState({});
+  useEffect(() => {
+    const cargarClientes = async () => {
+      try {
+        const data = await userService.getAll();
+        const clientesConUsuarios: any = await Promise.all(
+          data.map(async (cliente: any) => {
+            const usuario = await userService.getUserById(cliente.id_usuario);
+            return {
+              ...cliente,
+              id_usuario: usuario,
+            };
+          })
+        );
+        setClientes(clientesConUsuarios);
+      } catch (error) {
+        console.error("Error al cargar clientes", error);
+      }
+    };
+
+    cargarClientes();
+  }, []);
+
+  const handleClienteEditClick = (clienteSeleccionado: any) => {
+    setEditUser({
+      id_usuario: clienteSeleccionado.id_usuario.id_usuario,
+      nombre: clienteSeleccionado.id_usuario.nombre,
+      apellido: clienteSeleccionado.id_usuario.apellido,
+      correo: clienteSeleccionado.id_usuario.correo,
+      contrasena_hash: clienteSeleccionado.id_usuario.contrasena_hash,
+      activo: clienteSeleccionado.id_usuario.activo,
+    });
+
+    setEditCliente({});
+  };
+
+  const editClientHandleSubmit = async (e: any) => {
+    e.preventDefault();
+    const body = {
+      usuario: editUser,
+      cliente: editCliente,
+    };
+
+    await userService.edit(body, editUser.id_usuario);
+    alert("Cliente editado");
+  };
+  const desactivarCliente = async (id: any) => {
+    try {
+      await userService.remove(id);
+      alert("Cliente desactivado");
+    } catch (error) {
+      console.error("Error al desactivar cliente:", error);
+      alert("Error al desactivar el cliente");
+    }
   };
 
   console.log("user", user, "empleado", empleado);
@@ -287,6 +405,9 @@ function Dashboard() {
             </TabsTrigger>
             <TabsTrigger className="cursor-pointer" value="gestionUsuarios">
               Gestión de usuarios
+            </TabsTrigger>
+            <TabsTrigger className="cursor-pointer" value="gestionClientes">
+              Gestión de Clentes
             </TabsTrigger>
             <TabsTrigger className="cursor-pointer" value="promociones">
               Promociones
@@ -636,18 +757,165 @@ function Dashboard() {
                             </p>
                           </div>
                           <div className="flex items-center space-x-4">
-                            <div
-                              className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
+                            <button
+                              className="inline-flex cursor-pointer items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
                               data-v0-t="badge"
                             >
-                              Activo
-                            </div>
-                            <a
-                              href="/admin/users/1"
-                              className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                              {empleado.id_usuario.activo
+                                ? "Activo"
+                                : "Inactivo"}
+                            </button>
+
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <a
+                                  onClick={() => handleEditClick(empleado)}
+                                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                                >
+                                  Editar
+                                </a>
+                              </DialogTrigger>
+
+                              <DialogContent className="sm:max-w-[800px]">
+                                <form onSubmit={editHandleSubmit}>
+                                  <DialogHeader className="p-0">
+                                    <DialogTitle>Editar empleado</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="flex items-center gap-4 justify-center">
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="nombre">Nombre</Label>
+                                      <Input
+                                        id="nombre"
+                                        name="nombre"
+                                        value={editUser.nombre}
+                                        onChange={editHandleUserChange}
+                                      />
+                                    </div>
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="apellido">Apellido</Label>
+                                      <Input
+                                        id="apellido"
+                                        name="apellido"
+                                        value={editUser.apellido}
+                                        onChange={editHandleUserChange}
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-4">
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="correo">Correo</Label>
+                                      <Input
+                                        id="correo"
+                                        value={editUser.correo}
+                                        name="correo"
+                                        onChange={editHandleUserChange}
+                                      />
+                                    </div>
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="contrasena_hash">
+                                        Contraseña
+                                      </Label>
+                                      <Input
+                                        id="contrasena_hash"
+                                        value={editUser.contrasena_hash}
+                                        name="contrasena_hash"
+                                        onChange={editHandleUserChange}
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="grid gap-3 w-full">
+                                    <Label htmlFor="rut">Rut</Label>
+                                    <Input
+                                      id="rut"
+                                      name="rut"
+                                      value={editEmpleado.rut}
+                                      onChange={editHandleEmpleadoChange}
+                                    />
+                                  </div>
+                                  <div className="flex items-center gap-4">
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="rol">Sucursal</Label>
+                                      <Select
+                                        onValueChange={(value) =>
+                                          setEmpleado({
+                                            ...empleado,
+                                            sucursal_id: value,
+                                          })
+                                        }
+                                        value={empleado.sucursal_id}
+                                      >
+                                        <SelectTrigger className="w-full">
+                                          <SelectValue placeholder="Todas las sucursales" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="0">
+                                            Todas las sucursales
+                                          </SelectItem>
+                                          {sucursales.map((sucursal: any) => (
+                                            <SelectItem
+                                              key={sucursal.id_sucursal}
+                                              value={String(
+                                                sucursal.id_sucursal
+                                              )}
+                                            >
+                                              {sucursal.nombre}
+                                            </SelectItem>
+                                          ))}
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="rol">Rol</Label>
+                                      <Select
+                                        onValueChange={(value) =>
+                                          setEmpleado({
+                                            ...empleado,
+                                            rol: value,
+                                          })
+                                        }
+                                        value={empleado.rol}
+                                      >
+                                        <SelectTrigger className="w-full">
+                                          <SelectValue placeholder="Selecciona un rol" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="Vendedor">
+                                            Vendedor
+                                          </SelectItem>
+                                          <SelectItem value="Contador">
+                                            Contador
+                                          </SelectItem>
+                                          <SelectItem value="Bodeguero">
+                                            Bodeguero
+                                          </SelectItem>
+                                          <SelectItem value="Admin">
+                                            Admin
+                                          </SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                  </div>
+                                  <DialogFooter>
+                                    <DialogClose asChild>
+                                      <Button variant="outline">
+                                        Cancelar
+                                      </Button>
+                                    </DialogClose>
+                                    <Button type="submit">Crear</Button>
+                                  </DialogFooter>
+                                </form>
+                              </DialogContent>
+                            </Dialog>
+                            <Button
+                              variant="destructive"
+                              onClick={() =>
+                                desactivarUsuario(
+                                  empleado.id_usuario.id_usuario
+                                )
+                              }
                             >
-                              Editar
-                            </a>
+                              Eliminar
+                            </Button>
                           </div>
                         </div>
                       ))}
@@ -716,6 +984,139 @@ function Dashboard() {
                       >
                         Gestionar Contadores
                       </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="gestionClientes">
+            <div className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold text-black">
+                  Gestión de clientes
+                </h2>
+              </div>
+              <div className="grid gap-4">
+                <div
+                  className="rounded-lg border bg-card text-card-foreground shadow-sm"
+                  data-v0-t="card"
+                >
+                  <div className="flex flex-col space-y-1.5 p-6">
+                    <h3 className="text-2xl font-semibold leading-none tracking-tight">
+                      Clientes
+                    </h3>
+                  </div>
+                  <div className="p-6 pt-0">
+                    <div className="space-y-4">
+                      {clientes.map((cliente: any) => (
+                        <div
+                          key={cliente.id_usuario.id_usuario}
+                          className="flex items-center justify-between p-4 border rounded-lg"
+                        >
+                          <div>
+                            <h3 className="font-semibold">
+                              {cliente.id_usuario.nombre}
+                            </h3>
+                            <p className="text-sm text-gray-600">
+                              Correo:{cliente.id_usuario.correo}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              Contraseña: {cliente.id_usuario.contrasena_hash}
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-4">
+                            <button
+                              className="inline-flex cursor-pointer items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
+                              data-v0-t="badge"
+                            >
+                              {cliente.id_usuario.activo
+                                ? "Activo"
+                                : "Inactivo"}
+                            </button>
+
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <a
+                                  onClick={() =>
+                                    handleClienteEditClick(cliente)
+                                  }
+                                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3"
+                                >
+                                  Editar
+                                </a>
+                              </DialogTrigger>
+
+                              <DialogContent className="sm:max-w-[800px]">
+                                <form onSubmit={editClientHandleSubmit}>
+                                  <DialogHeader className="p-0">
+                                    <DialogTitle>Editar cliente</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="flex items-center gap-4 justify-center">
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="nombre">Nombre</Label>
+                                      <Input
+                                        id="nombre"
+                                        name="nombre"
+                                        value={editUser.nombre}
+                                        onChange={editHandleUserChange}
+                                      />
+                                    </div>
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="apellido">Apellido</Label>
+                                      <Input
+                                        id="apellido"
+                                        name="apellido"
+                                        value={editUser.apellido}
+                                        onChange={editHandleUserChange}
+                                      />
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-4">
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="correo">Correo</Label>
+                                      <Input
+                                        id="correo"
+                                        value={editUser.correo}
+                                        name="correo"
+                                        onChange={editHandleUserChange}
+                                      />
+                                    </div>
+                                    <div className="grid gap-3 w-full">
+                                      <Label htmlFor="contrasena_hash">
+                                        Contraseña
+                                      </Label>
+                                      <Input
+                                        id="contrasena_hash"
+                                        value={editUser.contrasena_hash}
+                                        name="contrasena_hash"
+                                        onChange={editHandleUserChange}
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <DialogFooter>
+                                    <DialogClose asChild>
+                                      <Button variant="outline">
+                                        Cancelar
+                                      </Button>
+                                    </DialogClose>
+                                    <Button type="submit">Crear</Button>
+                                  </DialogFooter>
+                                </form>
+                              </DialogContent>
+                            </Dialog>
+                            <Button
+                              variant="destructive"
+                              onClick={() =>
+                                desactivarCliente(cliente.id_usuario.id_usuario)
+                              }
+                            >
+                              Eliminar
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>

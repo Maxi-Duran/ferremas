@@ -43,6 +43,28 @@ const empleadoService = {
     }
     return await response.json();
   },
+  remove: async (id: any) => {
+    const response = await fetch(`${url.apiUrlUsers}/empleados/${id}`, {
+      method: "PATCH",
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  },
+  edit: async (body: any, id: any) => {
+    const response = await fetch(`${url.apiUrlUsers}/empleados/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  },
 };
 
 export default empleadoService;
