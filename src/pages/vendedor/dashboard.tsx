@@ -11,18 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationNext,
-  PaginationLink,
-} from "../../components/ui/pagination";
+
 import pedidosService from "../../services/pedidos.service";
 import { Input } from "../../components/ui/input";
 import productosService from "../../services/products.service";
 import userService from "../../services/usuarios.service";
+import inventarioService from "../../services/inventario.service";
 import sucursalesService from "../../services/sucursales.service";
 import categoriaService from "../../services/categorias.service";
 
@@ -30,10 +24,10 @@ import { useEffect, useState } from "react";
 import { Button } from "../../components/ui/button";
 function Dashboard() {
   const [categorias, setCategorias] = useState([]);
-  const [paginaActual, setPaginaActual] = useState(1);
-  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("0");
-  const [productos, setProductos] = useState([]);
 
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState("0");
+
+  const [inventario, setInventario] = useState([]);
   const [pedidos, setPedidos] = useState([]);
 
   useState([]);
@@ -41,41 +35,45 @@ function Dashboard() {
   const handleCategoriaChange = (value: any) => {
     setCategoriaSeleccionada(value);
   };
-  //pagination
-  const productosPorPagina = 10;
-
-  const indexInicio = (paginaActual - 1) * productosPorPagina;
-  const indexFin = indexInicio + productosPorPagina;
-  const productosAMostrar = productos.slice(indexInicio, indexFin);
-  const totalPaginas = Math.ceil(productos.length / productosPorPagina);
 
   //Llamada a lsitar productos
   useEffect(() => {
-    const cargarproductosCompletos = async () => {
+    const cargarInventarioConProductoYCategoria = async () => {
       try {
-        const productos = await productosService.getAll();
+        const inventario = await inventarioService.getAll();
 
-        const productosConDatos: any = await Promise.all(
-          productos.map(async (pedido: any) => {
-            const categoria = await categoriaService.getById(
-              pedido.categoria_id
+        const sucursalActual = parseInt(
+          localStorage.getItem("sucursal") || "0"
+        );
+
+        const inventarioFiltrado = inventario.filter(
+          (item: any) => item.sucursal_id === sucursalActual
+        );
+
+        const inventarioCompleto: any = await Promise.all(
+          inventarioFiltrado.map(async (item: any) => {
+            const producto = await productosService.productoById(
+              item.producto_id
             );
 
             return {
-              ...pedido,
-              categoria_id: categoria,
+              ...item,
+              producto_id: {
+                ...producto,
+              },
             };
           })
         );
 
-        setProductos(productosConDatos);
+        setInventario(inventarioCompleto);
       } catch (error) {
-        console.error("Error al cargar pedidos:", error);
+        console.error("Error al cargar inventario:", error);
       }
     };
 
-    cargarproductosCompletos();
+    cargarInventarioConProductoYCategoria();
   }, []);
+
   //llamada listar categorias
   useEffect(() => {
     categoriaService
@@ -114,7 +112,7 @@ function Dashboard() {
     cargarPedidosCompletos();
   }, []);
   console.log(pedidos);
-  console.log(productos);
+  console.log(inventario);
   const pedidosPendientes = pedidos.filter(
     (pedido: any) => pedido.estado === "Creado"
   );
@@ -407,22 +405,20 @@ function Dashboard() {
                   </Select>
                 </div>
                 <div className="pt-5 flex flex-col gap-5">
-                  {productosAMostrar.map((producto: any) => (
+                  {inventario.map((inventario: any) => (
                     <div
-                      key={producto.id_producto}
+                      key={inventario.id_inventario}
                       className="p-4 border rounded-lg"
                     >
                       <div className="flex items-center justify-between">
                         <div>
-                          <h3 className="font-semibold">{producto.nombre}</h3>
+                          <h3 className="font-semibold">
+                            {inventario.producto_id[0].nombre}
+                          </h3>
+                          <p className="text-sm text-gray-600">Marca:</p>
+
                           <p className="text-sm text-gray-600">
-                            Marca: {producto.marca}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Categoría: {producto.categoria_id.nombre}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Precio: {producto.preciosHistoricos}
+                            Precio: $89.990
                           </p>
                         </div>
                         <div className="text-right">
@@ -430,12 +426,12 @@ function Dashboard() {
                             <span className="text-sm font-medium">Stock:</span>
                             <span
                               className={`text-sm font-bold ${
-                                producto.stock < 10
+                                inventario.stock_actual < 10
                                   ? "text-red-600"
                                   : "text-green-600"
                               }`}
                             >
-                              {producto.stock}
+                              {inventario.stock_actual}
                             </span>
                           </div>
                           {/* <div
@@ -448,51 +444,6 @@ function Dashboard() {
                       </div>
                     </div>
                   ))}
-
-                  <div className="">
-                    <Pagination>
-                      <PaginationContent>
-                        <PaginationItem>
-                          <PaginationPrevious
-                            onClick={() =>
-                              setPaginaActual((prev) => Math.max(prev - 1, 1))
-                            }
-                            className={
-                              paginaActual === 1
-                                ? "pointer-events-none opacity-50"
-                                : ""
-                            }
-                          />
-                        </PaginationItem>
-
-                        {Array.from({ length: totalPaginas }).map((_, i) => (
-                          <PaginationItem key={i}>
-                            <PaginationLink
-                              isActive={paginaActual === i + 1}
-                              onClick={() => setPaginaActual(i + 1)}
-                            >
-                              {i + 1}
-                            </PaginationLink>
-                          </PaginationItem>
-                        ))}
-
-                        <PaginationItem>
-                          <PaginationNext
-                            onClick={() =>
-                              setPaginaActual((prev) =>
-                                Math.min(prev + 1, totalPaginas)
-                              )
-                            }
-                            className={
-                              paginaActual === totalPaginas
-                                ? "pointer-events-none opacity-50"
-                                : ""
-                            }
-                          />
-                        </PaginationItem>
-                      </PaginationContent>
-                    </Pagination>
-                  </div>
                 </div>
               </div>
             </div>
