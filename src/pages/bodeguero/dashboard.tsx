@@ -4,7 +4,21 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../components/ui/tabs";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
@@ -20,6 +34,30 @@ function Dashboard() {
   const [pedidos, setPedidos] = useState([]);
 
   const [inventario, setInventario] = useState([]);
+  const [createInventario, setCreateInventario] = useState({
+    producto_id: "",
+    stock_actual: "",
+    sucursal_id: localStorage.getItem("sucursal"),
+  });
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    await inventarioService.create(createInventario);
+    alert("Inventario creado");
+  };
+  const handleInventarioChange = (e: any) => {
+    const { name, value } = e.target;
+    setCreateInventario((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleProductoChange = (value: string) => {
+    setCreateInventario((prev) => ({
+      ...prev,
+      producto_id: value,
+    }));
+    console.log("Producto seleccionado:", value);
+  };
 
   useEffect(() => {
     const cargarPedidosCompletos = async () => {
@@ -79,8 +117,23 @@ function Dashboard() {
     cargarInventario();
   }, []);
 
-  console.log("inventarioi", inventario);
+  const [productos, setProductos] = useState<any[]>([]);
 
+  useEffect(() => {
+    const cargarProductos = async () => {
+      try {
+        const productosObtenidos = await productosService.getAll();
+        setProductos(productosObtenidos);
+      } catch (error) {
+        console.error("Error al cargar productos:", error);
+      }
+    };
+
+    cargarProductos();
+  }, []);
+
+  console.log("inventarioi", inventario);
+  console.log("create", createInventario);
   console.log(pedidos);
 
   const pedidosAprobados = pedidos.filter(
@@ -300,13 +353,60 @@ function Dashboard() {
           </TabsContent>
           <TabsContent value="gestionInventario">
             <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-              <div className="flex flex-col space-y-1.5 p-6">
-                <h3 className="text-2xl font-semibold leading-none tracking-tight">
-                  Control de Inventario
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  Monitorea el stock y movimientos de productos
-                </p>
+              <div className="flex flex-row items-center justify-between">
+                <div className="flex flex-col space-y-1,5 p-6">
+                  <h3 className="text-2xl font-semibold leading-none tracking-tight">
+                    Control de Inventario
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Monitorea el stock y movimientos de productos
+                  </p>
+                </div>
+
+                <Dialog>
+                  <DialogTrigger>Crear inventario</DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Crear Inventario</DialogTitle>
+                      <DialogDescription asChild>
+                        <div>
+                          <form onSubmit={handleSubmit}>
+                            <div className="grid grid-cols-1 w-full gap-2">
+                              <Select onValueChange={handleProductoChange}>
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Selecciona un producto" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {productos.map((producto) => (
+                                    <SelectItem
+                                      key={producto.id_producto}
+                                      value={String(producto.id_producto)}
+                                    >
+                                      {producto.nombre}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+
+                              <div className="flex flex-col gap-2">
+                                <Label>Stock</Label>
+                                <Input
+                                  type="number"
+                                  name="stock_actual"
+                                  onChange={handleInventarioChange}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="w-full mt-2 flex justify-end">
+                              <Button type="submit">Crear producto</Button>
+                            </div>
+                          </form>
+                        </div>
+                      </DialogDescription>
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
               </div>
               <div className="p-6 pt-0 flex flex-col gap-4">
                 <div>
