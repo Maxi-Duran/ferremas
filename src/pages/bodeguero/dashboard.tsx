@@ -44,6 +44,7 @@ function Dashboard() {
     e.preventDefault();
 
     await inventarioService.create(createInventario);
+
     alert("Inventario creado");
   };
   const handleInventarioChange = (e: any) => {
