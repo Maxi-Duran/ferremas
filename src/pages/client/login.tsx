@@ -50,18 +50,18 @@ function Login() {
   const handleSubmit2 = async (e: any) => {
     e.preventDefault();
     const data = await empleadoService.login(empleado);
-    if (data.empleados) {
+    if (data[0].empleados) {
       console.log("es empleado");
-      localStorage.setItem("user", data.empleados.id_usuario);
-      localStorage.setItem("rol", data.empleados.rol);
-      localStorage.setItem("sucursal", data.empleados.sucursal_id);
-      if (data.empleados.rol === "Vendedor") {
+      localStorage.setItem("user", data[0].empleados.id_usuario);
+      localStorage.setItem("rol", data[0].empleados.rol);
+      localStorage.setItem("sucursal", data[0].empleados.sucursal_id);
+      if (data[0].empleados.rol === "Vendedor") {
         navigate("/vendedor/dashboard");
-      } else if (data.empleados.rol === "Contador") {
+      } else if (data[0].empleados.rol === "Contador") {
         navigate("/contador/dashboard");
-      } else if (data.empleados.rol === "Bodeguero") {
+      } else if (data[0].empleados.rol === "Bodeguero") {
         navigate("/bodeguero/dashboard");
-      } else if (data.empleados.rol === "Admin") {
+      } else if (data[0].empleados.rol === "Admin") {
         navigate("/admin/dashboard");
       }
     }
